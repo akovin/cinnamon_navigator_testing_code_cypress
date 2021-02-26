@@ -1,4 +1,4 @@
 {
-  "baseUrl": "https://navigator-test.boincfast.ru/",
+  "baseUrl": "http://localhost:8777/",
   "ignoreTestFiles": "**/examples/*"
 }

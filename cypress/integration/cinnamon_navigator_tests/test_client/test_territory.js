@@ -1,7 +1,9 @@
 describe('test page territory', () => {
-  it('test page opening', () => {
+  before('test page opening', () => {
     cy.visit('/')
-    cy.get('[href="/land-plots"] span').click()
+    cy.get('[href="/land-plots"] span').then(element => {
+      element.click()
+    })
     cy.get('.my-areas-client-header__text').contains('Реестр территорий')
   })
   it('test elements exist on page', () => {
@@ -17,8 +19,13 @@ describe('test page territory', () => {
   })
   it('check main filter', () => {
     cy.get('.my-areas-client-header .v-input').click()
-    cy.get('.v-list-item__content > .v-list-item__title').first().then( district => {
-      district.click()
-    })
+    // cy.get('.v-list-item__title').contains('Петрозаводский ГО').click()
+    // cy.get('.v-list-item__content > .v-list-item__title').first().then( district => {
+    //   district.click()
+    // })
+    //ДОПИСАТЬ С ЛОКАТОРАМИ НОВЫМИ
+  })
+  it.only('check additional filter', () => {
+    cy.get('.my-areas-client-filter > button').click()
   })
 })

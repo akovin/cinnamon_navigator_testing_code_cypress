@@ -20,8 +20,8 @@ describe('test main page', () => {
     scrollUp.scrollUp('.v-btn--bottom')
   })
   //проверка возможности листать слайдер с новостями
-  it('click next/previous button', () => {
-    testSlider.testSlider('.v-window-item--active .v-list-item__title', '.my-news-client-last-three-news__flot-next-btn', '.my-news-client-last-three-news__flot-prev-btn')
+  it.only('click next/previous button', () => {
+    testSlider.testSlider('.v-window-item--active .v-list-item__title', '.my-news-client-last-three-news__flot-next-btn', '.my-news-client-last-three-news__flot-prev-btn', '.text-center > :nth-child(1)', '.text-center > :nth-child(2)')
     //не хватает проверки на активность кнопки на слайдере. но у нее неоднозначный локатор. когда сделают нормальный локатор - дописать тест
   })
   //проверка смены языка
