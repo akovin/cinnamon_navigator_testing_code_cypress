@@ -25,7 +25,7 @@ describe('test page territory', () => {
     // })
     //ДОПИСАТЬ С ЛОКАТОРАМИ НОВЫМИ
   })
-  it.only('check additional filter', () => {
+  it('check additional filter', () => {
     cy.get('.my-areas-client-filter > button').click()
   })
 })
