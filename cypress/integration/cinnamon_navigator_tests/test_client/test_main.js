@@ -11,7 +11,7 @@ describe('test main page', () => {
     visitPageAndCheck.visitPageAndCheck('/', 'инвестору в республике карелия')
   })
   //проверяем все ссылки на странице
-  it('test links', () => {
+  it.skip('test links', () => {
     testLinks.testLinks('.page-index__support-content .my-main-client-card-link__link')
     testLinks.testLinks('.page-index__help-content-card a')
   })
