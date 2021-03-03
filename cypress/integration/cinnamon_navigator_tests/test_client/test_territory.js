@@ -8,6 +8,9 @@ describe('test page territory', () => {
     })
     cy.get('.my-areas-client-header__text').contains('Реестр территорий')
   })
+  beforeEach('renew page territory', () => {
+    cy.visit('/land-plots').wait(1000)
+  })
   it('test elements exist on page', () => {
     cy.get('.my-areas-client-header .v-input').should('be.visible')
     cy.get('.my-areas-client-filter').should('be.visible')
@@ -15,7 +18,6 @@ describe('test page territory', () => {
     cy.get('.my-areas-client-table__card').find('.my-areas-client-table__status').should('have.length', 3).and('be.visible')
     cy.get('.my-areas-client-table__card').find('.my-areas-client-table__btn-open').should('have.length', 3).and('be.visible')
     cy.get('.my-areas-client-table__card').first().find('.my-helper-card-column-item__text').should('have.length', 7).and('be.visible')
-    // cy.get('.my-helper-card-column-item__text').should('be.visible') 
   })
   it('check main filter', () => {
     cy.get('.my-areas-client-header .v-input').click()
@@ -30,7 +32,6 @@ describe('test page territory', () => {
     })
   })
   it('check cadastral number  filter', () => {
-    cy.reload().wait(1000)
     //проверка фильтра по кадастровому номеру
     cy.get('.my-areas-client-filter > button').click()
     cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').first().invoke('text').then(cad_number_before => {
@@ -41,13 +42,8 @@ describe('test page territory', () => {
         })
       })
     })
-    //проверка сортировки
-    // cy.get('.my-areas-client-filter > button').click()
-    // cy.get('[data-test="Сортировать по"]').click()
-    //проверка фильтра по минимальному значению площад
   })
   it('check minimal area filter', () => {
-    cy.reload().wait(1000)
     //проверка фильтра по минимальному значению площади
     cy.get('[data-test="Площадь"] .my-helper-card-column-item__text').first().invoke('text').then(area_before => {
       const area_number_before = Number(area_before.match(/\d+/g))
@@ -62,7 +58,6 @@ describe('test page territory', () => {
     })
   })
   it('check maximum area filter', () => {
-    cy.reload().wait(1000)
     //проверка фильтра по минимальному значению площади
     cy.get('[data-test="Площадь"] .my-helper-card-column-item__text').first().invoke('text').then(area_before => {
       const area_number_before = Number(area_before.match(/\d+/g))
@@ -78,7 +73,6 @@ describe('test page territory', () => {
   })
   //по Гектару не проверяю фильтрацию, т.к. она не работает
   it('check sorting insrease and decrease area', () => {
-    cy.reload().wait(1000)
     testSorting.sortingByNumericValue('.my-areas-client-filter > button', '.my-areas-client-filter [data-test="Сортировать по"]',
       '.v-menu__content', '[data-test="Площадь"] .my-helper-card-column-item__text', 'Возрастанию площади', 0, true)
     testSorting.sortingByNumericValue('.my-areas-client-filter > button', '.my-areas-client-filter [data-test="Сортировать по"]',
@@ -161,7 +155,6 @@ describe('test page territory', () => {
     })
   })
   it('check sorting old first', () => {
-    cy.reload().wait(1000)
     cy.get('.my-areas-client-filter > button').wait(300).click().wait(300)
     cy.get('.my-areas-client-filter [data-test="Сортировать по"]').click()
     cy.get('.v-list-item__content').contains('Сначала старые').click().wait(1500)
@@ -238,7 +231,6 @@ describe('test page territory', () => {
     })
   })
   it('check sorting by cadastral number increasing', () => {
-    cy.reload().wait(1000)
     cy.get('.my-areas-client-filter > button').wait(300).click().wait(300)
     cy.get('.my-areas-client-filter [data-test="Сортировать по"]').click()
     cy.get('.v-list-item__content').contains('Кадастровому номеру от А до Я').click().wait(1500)
@@ -246,11 +238,9 @@ describe('test page territory', () => {
     var cadastralNumberBefore = cadastralNumberBeforeText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
     cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').each($el => {
       cy.wrap($el).invoke('text').then(cadastralNumberAfterText => {
-        // console.log(text)
         var cadastralNumberAfter = cadastralNumberAfterText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
         console.log(cadastralNumberAfter)
         for (var i = 1; i < cadastralNumberAfter.length; i++) {
-          // console.log(i)
           console.log(i)
           var cypherCadNumberBefore = cadastralNumberBefore[i]
           var cypherCadNumberAfter = cadastralNumberAfter[i]
@@ -263,12 +253,10 @@ describe('test page territory', () => {
           }
         }
         cadastralNumberBefore = cadastralNumberAfter
-        // console.log(cadastralNumberAfter)
       })
     })
   })
   it('check sorting by cadastral number decreasing', () => {
-    cy.reload().wait(1000)
     cy.get('.my-areas-client-filter > button').wait(300).click().wait(300)
     cy.get('.my-areas-client-filter [data-test="Сортировать по"]').click()
     cy.get('.v-list-item__content').contains('Кадастровому номеру от Я до А').click().wait(1500)
@@ -276,11 +264,9 @@ describe('test page territory', () => {
     var cadastralNumberBefore = cadastralNumberBeforeText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
     cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').each($el => {
       cy.wrap($el).invoke('text').then(cadastralNumberAfterText => {
-        // console.log(text)
         var cadastralNumberAfter = cadastralNumberAfterText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
         console.log(cadastralNumberAfter)
         for (var i = 1; i < cadastralNumberAfter.length; i++) {
-          // console.log(i)
           console.log(i)
           if (i == 10 && cadastralNumberAfter[i].length == 2) {
             var cypherCadNumberBefore = cadastralNumberBefore[i].match(/(\d{1})(\d{1})/)
