@@ -7,7 +7,7 @@ export class testAllSortings {
       } // true
     })
     cy.get(locatorOpenSorting).click()
-    cy.get(locatorOpenedListOfSorting).contains(typeOfSorting).wait(1500).click()
+    cy.get(locatorOpenedListOfSorting).contains(typeOfSorting).click().wait(500)
     let valueBefore = InitiativeValue
     cy.get(locatorValueOnCard).each($el => {
       cy.wrap($el).invoke('text').then(area_number => {

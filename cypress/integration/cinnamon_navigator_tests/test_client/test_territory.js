@@ -9,10 +9,6 @@ describe('test page territory', () => {
     cy.get('.my-areas-client-header__text').contains('Реестр территорий')
   })
   it('test elements exist on page', () => {
-    cy.visit('/')
-    cy.get('[href="/land-plots"] span').then(element => {
-      element.click()
-    })
     cy.get('.my-areas-client-header .v-input').should('be.visible')
     cy.get('.my-areas-client-filter').should('be.visible')
     cy.get('.my-areas-client-table__card').should('have.length', 3).should('be.visible')
@@ -34,6 +30,7 @@ describe('test page territory', () => {
     })
   })
   it('check cadastral number  filter', () => {
+    cy.reload().wait(1000)
     //проверка фильтра по кадастровому номеру
     cy.get('.my-areas-client-filter > button').click()
     cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').first().invoke('text').then(cad_number_before => {
@@ -50,6 +47,7 @@ describe('test page territory', () => {
     //проверка фильтра по минимальному значению площад
   })
   it('check minimal area filter', () => {
+    cy.reload().wait(1000)
     //проверка фильтра по минимальному значению площади
     cy.get('[data-test="Площадь"] .my-helper-card-column-item__text').first().invoke('text').then(area_before => {
       const area_number_before = Number(area_before.match(/\d+/g))
@@ -64,6 +62,7 @@ describe('test page territory', () => {
     })
   })
   it('check maximum area filter', () => {
+    cy.reload().wait(1000)
     //проверка фильтра по минимальному значению площади
     cy.get('[data-test="Площадь"] .my-helper-card-column-item__text').first().invoke('text').then(area_before => {
       const area_number_before = Number(area_before.match(/\d+/g))
@@ -78,10 +77,259 @@ describe('test page territory', () => {
     })
   })
   //по Гектару не проверяю фильтрацию, т.к. она не работает
-  it.only('check sorting', () => {
+  it('check sorting insrease and decrease area', () => {
+    cy.reload().wait(1000)
     testSorting.sortingByNumericValue('.my-areas-client-filter > button', '.my-areas-client-filter [data-test="Сортировать по"]',
       '.v-menu__content', '[data-test="Площадь"] .my-helper-card-column-item__text', 'Возрастанию площади', 0, true)
     testSorting.sortingByNumericValue('.my-areas-client-filter > button', '.my-areas-client-filter [data-test="Сортировать по"]',
       '.v-menu__content', '[data-test="Площадь"] .my-helper-card-column-item__text', 'Убыванию площади', 10000000000000000, false)
+  })
+  it('check sorting new first first', () => {
+    cy.reload().wait(1000)
+    cy.get('.my-areas-client-filter > button').click().wait(300)
+    cy.get('.my-areas-client-filter [data-test="Сортировать по"]').contains('Сначала новые').click().wait(500)
+    var dayBefore = 32
+    var monthBefore = 13
+    var yearBefore = 3000
+    var hourBefore = 25
+    var minuteBefore = 61
+    cy.get('.my-areas-client-table__status').each($el => {
+      cy.wrap($el).invoke('text').then(text => {
+        var datePublish = text.substr(23, 14)
+        var matches = datePublish.match(/(\d{2})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2})$/)
+        var day = parseInt(matches[1], 10)
+        var month = parseInt(matches[2], 10)
+        var year = parseInt(matches[3], 10)
+        var hour = parseInt(matches[4], 10)
+        var minute = parseInt(matches[5], 10)
+        if (year < yearBefore) {
+          yearBefore = year
+          monthBefore = month
+          dayBefore = day
+          hourBefore = hour
+          minuteBefore = minute
+        } else if (year > yearBefore) {
+          throw new Error("test fails here")
+        } else if (year = yearBefore) {
+          if (month < monthBefore) {
+            yearBefore = year
+            monthBefore = month
+            dayBefore = day
+            hourBefore = hour
+            minuteBefore = minute
+          } else if (month > monthBefore) {
+            throw new Error("test fails here")
+          } else if (month = monthBefore) {
+            if (day < dayBefore) {
+              yearBefore = year
+              monthBefore = month
+              dayBefore = day
+              hourBefore = hour
+              minuteBefore = minute
+            } else if (day < dayBefore) {
+              throw new Error("test fails here")
+            } else if (day = dayBefore) {
+              if (hour < hourBefore) {
+                yearBefore = year
+                monthBefore = month
+                dayBefore = day
+                hourBefore = hour
+                minuteBefore = minute
+              } else if (hour > hourBefore) {
+                throw new Error("test fails here")
+              } else if (hour = hourBefore) {
+                if (minute < minuteBefore) {
+                  yearBefore = year
+                  monthBefore = month
+                  dayBefore = day
+                  hourBefore = hour
+                  minuteBefore = minute
+                } else if (minute > minuteBefore) {
+                  throw new Error("test fails here")
+                } else if (minute = minuteBefore) {
+                  yearBefore = year
+                  monthBefore = month
+                  dayBefore = day
+                  hourBefore = hour
+                  minuteBefore = minute
+                }
+              }
+            }
+          }
+        }
+      })
+    })
+  })
+  it('check sorting old first', () => {
+    cy.reload().wait(1000)
+    cy.get('.my-areas-client-filter > button').wait(300).click().wait(300)
+    cy.get('.my-areas-client-filter [data-test="Сортировать по"]').click()
+    cy.get('.v-list-item__content').contains('Сначала старые').click().wait(1500)
+    var dayBefore = 0
+    var monthBefore = 0
+    var yearBefore = 0
+    var hourBefore = 0
+    var minuteBefore = 0
+    cy.get('.my-areas-client-table__status').each($el => {
+      cy.wrap($el).invoke('text').then(text => {
+        var datePublish = text.substr(23, 14)
+        var matches = datePublish.match(/(\d{2})\.(\d{2})\.(\d{2}) (\d{2}):(\d{2})$/)
+        var day = parseInt(matches[1], 10)
+        var month = parseInt(matches[2], 10)
+        var year = parseInt(matches[3], 10)
+        var hour = parseInt(matches[4], 10)
+        var minute = parseInt(matches[5], 10)
+        if (year > yearBefore) {
+          yearBefore = year
+          monthBefore = month
+          dayBefore = day
+          hourBefore = hour
+          minuteBefore = minute
+        } else if (year < yearBefore) {
+          throw new Error("test fails here")
+        } else if (year = yearBefore) {
+          if (month > monthBefore) {
+            yearBefore = year
+            monthBefore = month
+            dayBefore = day
+            hourBefore = hour
+            minuteBefore = minute
+          } else if (month < monthBefore) {
+            throw new Error("test fails here")
+          } else if (month = monthBefore) {
+            if (day > dayBefore) {
+              yearBefore = year
+              monthBefore = month
+              dayBefore = day
+              hourBefore = hour
+              minuteBefore = minute
+            } else if (day < dayBefore) {
+              throw new Error("test fails here")
+            } else if (day = dayBefore) {
+              if (hour > hourBefore) {
+                yearBefore = year
+                monthBefore = month
+                dayBefore = day
+                hourBefore = hour
+                minuteBefore = minute
+              } else if (hour < hourBefore) {
+                throw new Error("test fails here")
+              } else if (hour = hourBefore) {
+                if (minute > minuteBefore) {
+                  yearBefore = year
+                  monthBefore = month
+                  dayBefore = day
+                  hourBefore = hour
+                  minuteBefore = minute
+                } else if (minute < minuteBefore) {
+                  throw new Error("test fails here")
+                } else if (minute = minuteBefore) {
+                  yearBefore = year
+                  monthBefore = month
+                  dayBefore = day
+                  hourBefore = hour
+                  minuteBefore = minute
+                }
+              }
+            }
+          }
+        }
+      })
+    })
+  })
+  it('check sorting by cadastral number increasing', () => {
+    cy.reload().wait(1000)
+    cy.get('.my-areas-client-filter > button').wait(300).click().wait(300)
+    cy.get('.my-areas-client-filter [data-test="Сортировать по"]').click()
+    cy.get('.v-list-item__content').contains('Кадастровому номеру от А до Я').click().wait(1500)
+    var cadastralNumberBeforeText = '00:00:0000000:00'
+    var cadastralNumberBefore = cadastralNumberBeforeText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
+    cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').each($el => {
+      cy.wrap($el).invoke('text').then(cadastralNumberAfterText => {
+        // console.log(text)
+        var cadastralNumberAfter = cadastralNumberAfterText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
+        console.log(cadastralNumberAfter)
+        for (var i = 1; i < cadastralNumberAfter.length; i++) {
+          // console.log(i)
+          console.log(i)
+          var cypherCadNumberBefore = cadastralNumberBefore[i]
+          var cypherCadNumberAfter = cadastralNumberAfter[i]
+          if (cypherCadNumberAfter > cypherCadNumberBefore) {
+            break
+          } else if (cypherCadNumberAfter < cypherCadNumberBefore) {
+            throw new Error("test fails here")
+          } else {
+            continue
+          }
+        }
+        cadastralNumberBefore = cadastralNumberAfter
+        // console.log(cadastralNumberAfter)
+      })
+    })
+  })
+  it('check sorting by cadastral number decreasing', () => {
+    cy.reload().wait(1000)
+    cy.get('.my-areas-client-filter > button').wait(300).click().wait(300)
+    cy.get('.my-areas-client-filter [data-test="Сортировать по"]').click()
+    cy.get('.v-list-item__content').contains('Кадастровому номеру от Я до А').click().wait(1500)
+    var cadastralNumberBeforeText = '99:99:9999999:99'
+    var cadastralNumberBefore = cadastralNumberBeforeText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
+    cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').each($el => {
+      cy.wrap($el).invoke('text').then(cadastralNumberAfterText => {
+        // console.log(text)
+        var cadastralNumberAfter = cadastralNumberAfterText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
+        console.log(cadastralNumberAfter)
+        for (var i = 1; i < cadastralNumberAfter.length; i++) {
+          // console.log(i)
+          console.log(i)
+          if (i == 10 && cadastralNumberAfter[i].length == 2) {
+            var cypherCadNumberBefore = cadastralNumberBefore[i].match(/(\d{1})(\d{1})/)
+            var cypherCadNumberAfter = cadastralNumberAfter[i]
+            if (cypherCadNumberAfter[0] < cypherCadNumberBefore[0]) {
+              if (cypherCadNumberAfter[1] < cypherCadNumberBefore[1]) {
+                break
+              } else if (cypherCadNumberAfter[1] > cypherCadNumberBefore[1]) {
+                throw new Error("test fails here")
+              } else {
+                continue
+              }
+            } else if (cypherCadNumberAfter[0] > cypherCadNumberBefore[0]) {
+              throw new Error("test fails here")
+            } else {
+              if (cypherCadNumberAfter[1] < cypherCadNumberBefore[1]) {
+                break
+              } else if (cypherCadNumberAfter[1] > cypherCadNumberBefore[1]) {
+                throw new Error("test fails here")
+              } else {
+                continue
+              }
+            }
+
+          } else if (i == 10 && cadastralNumberAfter[i].length == 1) {
+            var cypherCadNumberBefore = cadastralNumberBefore[i].match(/^(\d{1})/)
+            var cypherCadNumberAfter = cadastralNumberAfter[i]
+            if (cypherCadNumberAfter < cypherCadNumberBefore) {
+              break
+            } else if (cypherCadNumberAfter > cypherCadNumberBefore) {
+              throw new Error("test fails here")
+            } else {
+              continue
+            }
+          }
+          else {
+            var cypherCadNumberBefore = cadastralNumberBefore[i]
+            var cypherCadNumberAfter = cadastralNumberAfter[i]
+            if (cypherCadNumberAfter < cypherCadNumberBefore) {
+              break
+            } else if (cypherCadNumberAfter > cypherCadNumberBefore) {
+              throw new Error("test fails here")
+            } else {
+              continue
+            }
+          }
+        }
+        cadastralNumberBefore = cadastralNumberAfter
+      })
+    })
   })
 })
