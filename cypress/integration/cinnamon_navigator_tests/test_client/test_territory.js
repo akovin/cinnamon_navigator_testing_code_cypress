@@ -318,4 +318,33 @@ describe('test page territory', () => {
       })
     })
   })
+  it('check opening card', () => {
+    cy.get('[data-test="Кадастровый номер"] .my-helper-card-column-item__text').first().invoke('text').then(cadastralNumberText => {
+      var cadastralNumber = cadastralNumberText.match(/(\d{1})(\d{1})\:(\d{1})(\d{1})\:(\d{1})(\d{1})(\d{1})(\d{1})(\d{1})(\d{1,2}):(\d{1})(\d{1})/)
+      cy.get('.my-areas-client-table__card .my-areas-client-table__btn-open').first().click().then(() => {
+        cy.get('.v-toolbar__title').contains(cadastralNumber[0])
+      })
+    })
+  })
+  it.only('check elements exist on card and close button working', () => {
+    cy.get('.my-areas-client-table__card .my-areas-client-table__btn-open').first().click().then(() => {
+      cy.get('.v-toolbar__title').should('be.visible')
+      cy.get('.v-dialog [data-test="Район"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Адрес"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Кадастровый номер"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Площадь"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Категория"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Форма собственности"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Разрешенное использование"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Транспортная инфраструктура"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Инженерная инфраструктура"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Варианты приобретения"]').should('be.visible')
+      cy.get('.v-dialog [data-test="Контакты"]').should('be.visible')
+      cy.get('.v-dialog [data-test="my-areas-client-dialog-left-column-simple-buildings"]').should('be.visible')
+      cy.get('.v-dialog [data-test="my-areas-client-dialog-left-column-simple-cadastralCost"]').should('be.visible')
+      cy.get('.v-dialog [data-test="my-areas-client-dialog-left-column-simple-cost"]').should('be.visible')
+      cy.get('.v-dialog [data-test="close-btn-icon"]').should('be.visible').click()
+      cy.get('.v-toolbar__title').should('not.be.visible')
+    })
+  })
 })
